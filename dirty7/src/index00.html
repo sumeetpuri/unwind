@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <title>Landscape Dirty Seven</title>
+        <script>
+            function throwCard(card){
+                //alert("Card thrown "+document.getElementById(card).src);
+                //alert("openCard "+document.getElementById("openCard").src); 
+
+                document.getElementById("openCard").src = document.getElementById(card).src;
+            }
+        </script>
+    </head>
+    <body>
+        <table border="20" align="center">
+            <!--1st row. This row is oppponents cards.
+            -->
+            <tr align="center">
+                <td>
+                    <table border="0">
+                        <tr align="center">
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td> 
+                        </tr>
+                    </table>
+
+
+                </td>
+                      
+            </tr>
+            <!--2nd row. This row is play area.
+            -->
+            <tr align="center">
+                <td>
+                    <table border="0">
+                        <tr>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td><img id="openCard" src="./images/cards/8D.jpg" height="100" width="70"></td>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <!--
+                3rd row. This row is my cards.
+            -->
+            <tr align="center">
+                <td>
+                    <table border="0">
+                        <tr>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td><img id="card1" src="./images/cards/2d.jpg" height="100" width="70" onclick="throwCard('card1');"></td>
+                            <td><img id="card2" src="./images/cards/6c.jpg" height="100" width="70" onclick="throwCard('card2');"></td>
+                            <td><img id="card3" src="./images/cards/7S.jpg" height="100" width="70" onclick="throwCard('card3');"></td>
+                            <td><img id="card4" src="./images/cards/9H.jpg" height="100" width="70" onclick="throwCard('card4');"></td>
+                            <td><img id="card5" src="./images/cards/10s.jpg" height="100" width="70" onclick="throwCard('card5');"></td>
+                            <td><img id="card6" src="./images/cards/JH.jpg" height="100" width="70" onclick="throwCard('card6');"></td>
+                            <td><img id="card7" src="./images/cards/AC.jpg" height="100" width="70" onclick="throwCard('card7');"></td>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

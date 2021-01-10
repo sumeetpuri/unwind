@@ -1,0 +1,228 @@
+<html>
+    <head>
+        <title>Landscape Dirty Seven</title>
+        <script>
+            const deckOfCards = ["AS", "KS", "QS", "JS", "10S", "9S", "8S", "7S", "6S", "5S", "4S", "3S", "2S", "AH", "KH", "QH", "JH", "10H", "9H", "8H", "7H", "6H", "5H", "4H", "3H", "2H", "AD", "KD", "QD", "JD", "10D", "9D", "8D", "7D", "6D", "5D", "4D", "3D", "2D", "AC", "KC", "QC", "JC", "10C", "9C", "8C", "7C", "6C", "5C", "4C", "3C", "2C"];
+            
+            var myHand = {"cards" : []};
+            //var myHand = {"cards" : ["5D", "7C", "KD", "QD", "AS", "JH", "5D"]};
+            var openCard = "";
+            var oldOpenCard ="";
+            const imgpath = "./images/cards/";
+            const imgext = ".jpg";
+
+            var jFlag = false;
+            var aFlag = false;
+            var openCardSuit = "";
+
+            
+
+            function deal() {
+                //this method should be centralized, so send a message to deal?
+
+                //assign 7 random cards to each player
+                myHand = {"cards" : []};
+                for (let index = 0; index < 7; index++) {
+                    myHand.cards.push (getRandomCard());                    
+                }
+                
+                //assign open card
+                openCard = getRandomCard();
+                oldOpenCard = openCard;
+                openCardSuit = openCard.substring(1,2);
+                console.log("openCardSuit="+openCardSuit);
+
+                repaintCards();
+                document.getElementById("suits").style.display='none';
+            }
+            
+            function validateThrow() {
+                console.log(openCard);
+                console.log(oldOpenCard);
+                //code all the validation business rules
+                //this method should be centralized
+                if (openCard === "JH" || openCard === "JS" || openCard === "JC" || openCard === "JD") {
+                    //alert("J thrown");
+                    document.getElementById("suits").style.display='block';
+                    //set the J flag - this is needed as the next card should be the same suit.
+                    jFlag = true;
+                }
+                //1. validate same suit or the same number
+                else if(openCard.slice(openCard.length-1) !== oldOpenCard.slice(oldOpenCard.length-1) && openCard.substring(0, openCard.length-1) !== oldOpenCard.substring(0, oldOpenCard.length-1) ){
+                    //console.log("Open Suit"+ openCard.slice(openCard.length-1) + " Old Suit:"+ oldOpenCard.slice(oldOpenCard.length-1));
+                    //console.log("Please throw the same suit of number");
+                    return false;
+
+                }
+                
+                //2. validate 7
+                //3. validate A
+                //4. validate J
+
+
+                return true;
+
+            }
+
+
+            function changeSuit(suit){
+                openCardSuit = suit;
+            }
+
+            function printCards(array) {
+                array.forEach(element => {
+                    console.log (element + ", ");
+                });
+            }
+
+            //this function repaints player's cards
+            function repaintCards() {
+
+                //repaint the open card
+                document.getElementById("openCard").src = getCardSrc(openCard);
+
+                //Clear the row and add an empty row
+                tableMyHand = document.getElementById("tbMyHand");
+                tableMyHand.deleteRow(-1);
+                rowMyHand = tableMyHand.insertRow();
+                
+                //iterate through the hand array and insert the cells accordingly
+                //alert ("in show my cards" + myHand.cards[0]);
+                for(i in myHand.cards) {
+                    //alert("in show loop " + myHand.cards[i]);
+                    newcell = rowMyHand.insertCell();
+                    newcell.innerHTML = '<img id="' + myHand.cards[i] + '" src="'+getCardSrc(myHand.cards[i])+'" height="100" width="70" onclick="throwCard(\'' + myHand.cards[i] + '\');">';
+                }
+
+                printCards(myHand.cards);
+            }
+
+            function getRandomCard() {
+
+                //return any of the 52 cards
+                //ideally run on the server
+                randCardId = Math.floor((Math.random() * 51) + 1);
+                return deckOfCards[randCardId];
+
+            }
+
+            function getCardSrc(card){
+                return imgpath + card + imgext;
+            }
+
+            function throwCard(card){
+                //alert("throwCard "+ card);
+                //alert("Card thrown "+document.getElementById(card).src);
+                //alert("openCard "+document.getElementById("openCard").src);
+
+                //2. update the open card but keep existing card state for validation
+                oldOpenCard = openCard;
+                openCard = card;
+
+                //validate the throw as per rules
+                if(validateThrow() === true) {
+
+                    //3. update the hand by removing the card
+                    const index = myHand.cards.indexOf(card);
+                    //alert("found card at " + index);
+                    if (index !== undefined) myHand.cards.splice(index, 1);
+                    //4. repaint
+                    repaintCards();
+                }
+                else {
+                    //reset the open card as no card was thrown
+                    openCard = oldOpenCard;
+                }
+
+
+                 
+            }
+
+            //Pick a card from the pile
+            function pickCard() {
+
+                //ideally run on the server
+                myHand.cards.push(getRandomCard());
+
+                //4. repaint
+                repaintCards();
+            }
+        
+        </script>
+    </head>
+    <body>
+        <input type="button" name="Start" value="Start" onclick="deal();">
+        <br>
+        <table border="20" align="center">
+            <!--1st row. This row is oppponents cards.
+            -->
+            <tr align="center">
+                <td>
+                    <table border="0">
+                        <tr align="center">
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70"></td>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td> 
+                        </tr>
+                    </table>
+
+
+                </td>
+                      
+            </tr>
+            <!--2nd row. This row is play area.
+            -->
+            <tr align="center">
+                <td>
+                    <table border="0">
+                        <tr>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td id="suits"> 
+                                Change Suit with a J <br>
+                                <img id="suitHearts" src="./images/cards/hearts.png" height="30" width="30">
+                                <br>
+                                <img id="suitClubs" src="./images/cards/clubs.png" height="30" width="30">
+                                <br>
+                                <img id="suitDiamonds" src="./images/cards/diamonds.png" height="30" width="30">
+                                <br>
+                                <img id="suitSpades" src="./images/cards/spades.png" height="30" width="30">
+                            
+                            </td>
+                            <td><img id="openCard" src="./images/cards/8D.jpg" height="100" width="70"></td>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td><img src="./images/cards/Red_back.jpg" height="100" width="70" onclick="pickCard();"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <!--
+                3rd row. This row is my cards.
+            -->
+            <tr align="center">
+                <td>
+                    <table border="0" id="tbMyHand">
+                       <!-- <tr id="trMyHand">1
+                            
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td><img id="card0" src="./images/cards/Red_back.jpg" height="100" width="70" onclick="throwCard('card0');"></td>
+                            <td><img id="card1" src="./images/cards/Red_back.jpg" height="100" width="70" onclick="throwCard('card1');"></td>
+                            <td><img id="card2" src="./images/cards/Red_back.jpg" height="100" width="70" onclick="throwCard('card2');"></td>
+                            <td><img id="card3" src="./images/cards/Red_back.jpg" height="100" width="70" onclick="throwCard('card3');"></td>
+                            <td><img id="card4" src="./images/cards/Red_back.jpg" height="100" width="70" onclick="throwCard('card4');"></td>
+                            <td><img id="card5" src="./images/cards/Red_back.jpg" height="100" width="70" onclick="throwCard('card5');"></td>
+                            <td><img id="card6" src="./images/cards/Red_back.jpg" height="100" width="70" onclick="throwCard('card6');"></td>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                        </tr>-->
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
