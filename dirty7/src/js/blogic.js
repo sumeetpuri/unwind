@@ -11,6 +11,9 @@ var jFlag = false;
 var isSuitSet = false;
 var openCardSuit = "";
 
+var is7Flag = "false";
+var countCardPick = 0;
+
 var aFlag = false;
 
 
@@ -37,20 +40,26 @@ function deal() {
 function validateThrow() {
     console.log(openCard);
     console.log(oldOpenCard);
-    console.log("JFlag "+jFlag + "isSetSuit "+isSuitSet + "open suit"+ openCardSuit);
+    console.log("JFlag="+jFlag + " isSetSuit="+isSuitSet + " open suit="+ openCardSuit + " countCardPick="+countCardPick);
     //code all the validation business rules
     //this method should be centralized
+
+    // handle J
     if (openCard === "JH" || openCard === "JS" || openCard === "JC" || openCard === "JD") {
-        //alert("J thrown");
+        if(is7Flag === true) {
+            //you can't throw a J, as the open card is a 7
+            showError("You can only throw a 7, or pick " + countCardPick + " cards");
+            return;
+        }
         document.getElementById("suits").style.display='block';
         //set the J flag - this is needed as the next card should be the same suit.
         jFlag = true;
         return true;
     }
 
-    if(jFlag) {
+    if(jFlag === true) {
         //the previous card was J
-        if(!isSuitSet) {
+        if(isSuitSet !== true) {
             //error, as a card was thrown after J without setting a suit
             showError("Please select new suit");
             return false;
@@ -76,17 +85,47 @@ function validateThrow() {
 
     }
 
-    //1. validate same suit or the same number
+    //validate same suit or the same number
     if(openCard.slice(openCard.length-1) !== oldOpenCard.slice(oldOpenCard.length-1) && openCard.substring(0, openCard.length-1) !== oldOpenCard.substring(0, oldOpenCard.length-1) ){
         //console.log("Open Suit"+ openCard.slice(openCard.length-1) + " Old Suit:"+ oldOpenCard.slice(oldOpenCard.length-1));
-        showError("Please throw the same suit or number");
+        //if the previous card was 7, throw specific error
+        if(is7Flag === true){
+            showError("You can only throw a 7, or pick " + countCardPick + " cards");
+        }
+        else {
+            showError("Please throw the same suit or number");
+        }
         return false;
 
     }
-    
-    //2. validate 7
-    //3. validate A
-    //4. validate J
+
+    //special case of 7
+
+    if (openCard === "7H" || openCard === "7S" || openCard === "7C" || openCard === "7D") {
+        console.log("dirty 7 thrown");
+        //set the 7 flag - this is needed as the next card should be the same suit.
+        //validate that the next step is either 7 or pick 2 cards
+        countCardPick = countCardPick + 2;
+        is7Flag = true;
+        return true;
+    }
+    //next round after first 7. Pick will clear the flag and count.
+    if(is7Flag === true) {
+        console.log("is7Flag ="+is7Flag);
+        //you can't throw a card, you must pick cards
+        showError("You can only throw a 7, or pick " + countCardPick + " cards");
+        return false;        
+    }  
+
+    //handle A
+    if (openCard === "AH" || openCard === "AS" || openCard === "AC" || openCard === "AD") {
+        console.log("A thrown");
+        //set the A flag - this means that the next turn is missed
+        //validate that the next step is either 7 or pick 2 cards
+        isAFlag = true;
+        return true;
+    }
+ 
 
 
     return true;
@@ -129,6 +168,10 @@ function repaintCards() {
     }
 
     printCards(myHand.cards);
+
+    if (myHand.cards.length === 0) {
+        showError("You have won!!");
+    }
 }
 
 function getRandomCard() {
@@ -179,7 +222,13 @@ function throwCard(card){
 function pickCard() {
     clearError();
 
-    if(jFlag) {
+    if(is7Flag === true) {
+        countCardPick --;
+        if(countCardPick === 0) {
+            is7Flag = false;
+        }
+    }
+    if(jFlag === true) {
         showError("You must select a suit first!"); 
     }
     else {
